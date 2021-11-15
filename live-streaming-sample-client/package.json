@@ -21,7 +21,8 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prepare": "husky install"
   },
   "eslintConfig": {
     "extends": [
@@ -49,17 +50,11 @@
     "eslint-config-airbnb": "^19.0.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "husky": "^7.0.4",
-    "lint-staged": "^12.0.2",
+    "husky": ">=6",
+    "lint-staged": ">=10",
     "prettier": "^2.4.1"
   },
-  "husky": {
-    "hooks": {
-      "pre-push": "npm run test:unit",
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
-    "*.{js,jsx}": "eslint"
+    "*.js": "eslint --cache --fix"
   }
 }
