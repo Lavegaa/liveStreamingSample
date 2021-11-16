@@ -17,7 +17,12 @@ const server = require("http").createServer(
   app
 );
 
-var io = require("socket.io")(server);
+var io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+    credential: true,
+  },
+});
 spawn("ffmpeg", ["-h"]).on("error", function (m) {
   console.error(
     "FFMpeg not found in system cli; please install ffmpeg properly or make a softlink to ./!"
@@ -28,7 +33,6 @@ spawn("ffmpeg", ["-h"]).on("error", function (m) {
 io.on("connection", function (socket) {
   socket.emit("message", "Hello from mediarecorder-to-rtmp server!");
   socket.emit("message", "Please set rtmp destination before start streaming.");
-
   var ffmpeg_process,
     feedStream = false;
   socket.on("config_rtmpDestination", function (m) {
