@@ -7,7 +7,6 @@ var app = express();
 var spawn = require("child_process").spawn;
 var fs = require("fs");
 var https = require("https");
-app.use(express.static("public"));
 
 const server = require("http").createServer(
   //{
