@@ -300,7 +300,7 @@ debug@^3.2.7:
   dependencies:
     ms "^2.1.1"
 
-debug@~4.3.1, debug@~4.3.2:
+debug@^4.2.0, debug@~4.3.1, debug@~4.3.2:
   version "4.3.2"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.2.tgz#f0a49c18ac8779e31d4a0c6029dfb76873c7428b"
   integrity sha512-mOp8wKcvj7XxC78zLgw/ZA+6TSgkoE2C/ienthhRD298T7UNwAg9diBpLRxC0mOezLl4B0xV7M0cCO6P/O0Xhw==
@@ -441,6 +441,13 @@ express@^4.17.1:
     type-is "~1.6.18"
     utils-merge "1.0.1"
     vary "~1.1.2"
+
+ffmpeg-stream@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/ffmpeg-stream/-/ffmpeg-stream-0.7.0.tgz#bd945bdb2cf4e7966f67e97d06a580442cec3dcf"
+  integrity sha512-Cz6EDH1LGBMZAb2ae03hvyMkrhZr7LdQ5fj/YUnaj00pxs5BDVZAF2AsYrthO8RrJ8ybwNTlAmvyztAOuuQg3g==
+  dependencies:
+    debug "^4.2.0"
 
 fill-range@^7.0.1:
   version "7.0.1"

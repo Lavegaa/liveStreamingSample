@@ -1,4 +1,4 @@
-import React, { useEffect, useState, RefObject, useRef } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import socketIOClient from 'socket.io-client';
 
 interface ConstraintsType {
@@ -23,11 +23,19 @@ interface ConstraintsType {
   };
 }
 
+interface mobileType {
+  audio: boolean;
+  video: {
+    facingMode: string;
+  };
+}
+
 const useStream = function () {
-  const [url, setUrl] = useState<string>('');
+  const [url, setUrl] = useState<string>('rtmp://10.100.120.47:1935/stream/two');
   const [localStream, setLocalStream] = useState<MediaStream | undefined>();
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | undefined>();
   const [socket, setSocket] = useState<any>();
+  const [message, setMessage] = useState<string>();
   const [constraints, setConstraints] = useState<ConstraintsType>({
     audio: { sampleRate: 22050, echoCancellation: true },
     video: {
@@ -36,6 +44,7 @@ const useStream = function () {
       frameRate: { ideal: 15 },
     },
   });
+  const [mobile, setMobile] = useState<mobileType>({ audio: true, video: { facingMode: 'user' } });
   const viewRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -47,6 +56,10 @@ const useStream = function () {
       });
       socket.on('fatal', (m: any) => {
         console.log('fatal socket error!!', m);
+      });
+      socket.on('message', (m: any) => {
+        console.log('message:  ', m);
+        setMessage(m);
       });
     }
   }, [socket]);
@@ -68,22 +81,25 @@ const useStream = function () {
 
       mediaRecorder.ondataavailable = function (e) {
         console.log(e.data);
+        if (message !== 'onAir') {
+          setMessage('onAir');
+        }
         socket.emit('binarystream', e.data);
       };
     }
   }, [mediaRecorder]);
 
-  const handleStart = () => {
+  const handleStart = useCallback(() => {
     if (localStream) {
       setMediaRecorder(new MediaRecorder(localStream));
     }
-  };
+  }, [localStream]);
 
   const handleUrl = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(e.target.value);
   };
 
-  const handleConnect = (play: boolean) => {
+  const handleConnect = useCallback(() => {
     const socketOptions = {
       secure: true,
       reconnection: true,
@@ -94,18 +110,19 @@ const useStream = function () {
       query: { framespersecond: '15', audioBitrate: '22050' },
     };
 
-    setSocket(socketIOClient('http://127.0.0.1:1437', socketOptions));
-  };
+    setSocket(socketIOClient('http://10.20.125.112:1437', socketOptions));
+  }, []);
 
-  const handleCameraReady = () => {
+  const handleCameraReady = useCallback(() => {
     if (localStream && viewRef.current) {
       viewRef.current.srcObject = localStream;
     }
-  };
+  }, [localStream, viewRef]);
 
   return {
     url,
     viewRef,
+    message,
     handleUrl,
     handleConnect,
     handleCameraReady,

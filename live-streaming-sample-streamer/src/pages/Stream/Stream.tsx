@@ -2,12 +2,13 @@ import React from 'react';
 import useStream from './useStream';
 
 const Stream = function () {
-  const { url, viewRef, handleUrl, handleConnect, handleCameraReady, handleStart } = useStream();
+  const { url, viewRef, message, handleUrl, handleConnect, handleCameraReady, handleStart } = useStream();
   return (
     <div>
       <h1>URL: {url}</h1>
       <input value={url} onChange={handleUrl} />
-      <button type="button" onClick={() => handleConnect(true)}>
+      <h1>Message: {message}</h1>
+      <button type="button" onClick={() => handleConnect()}>
         connect
       </button>
       <button type="button" onClick={() => handleCameraReady()}>
@@ -16,7 +17,7 @@ const Stream = function () {
       <button type="button" onClick={() => handleStart()}>
         Start
       </button>
-      <video ref={viewRef} playsInline muted autoPlay width={400} height={400} />
+      <video ref={viewRef} playsInline muted autoPlay width={1920} height={1080} />
     </div>
   );
 };

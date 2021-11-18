@@ -31,6 +31,7 @@ spawn("ffmpeg", ["-h"]).on("error", function (m) {
 });
 
 io.on("connection", function (socket) {
+  console.log("connect!");
   socket.emit("message", "Hello from mediarecorder-to-rtmp server!");
   socket.emit("message", "Please set rtmp destination before start streaming.");
   var ffmpeg_process,
@@ -237,6 +238,7 @@ io.on("connection", function (socket) {
       ffmpeg_process.kill("SIGINT");
       return;
     }
+    console.log(m);
     feedStream(m);
   });
   socket.on("disconnect", function () {
