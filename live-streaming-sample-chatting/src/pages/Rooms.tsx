@@ -1,7 +1,7 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
 
 interface IRoom {
   roomId: string;
@@ -43,35 +43,39 @@ const SCRoom = styled(Link)`
 `;
 
 const Rooms = () => {
-  const [id, setId] = useState('');
+  const [id, setId] = useState("default");
   const [rooms, setRooms] = useState<IRoom[]>([]);
-  const [roomName, setRoomName] = useState('');
+  const [roomName, setRoomName] = useState("");
 
   useEffect(() => {
-    axios.get('/chat/rooms')
-    .then(res => setRooms(res.data))
+    axios.get("/chat/rooms").then((res) => setRooms(res.data));
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("userId", id);
+  }, [id]);
 
   const onChangeId = (e: React.ChangeEvent<HTMLInputElement>) => {
     setId(e.target.value);
-  }
+  };
 
   const onChangeRoomName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRoomName(e.target.value);
-  }
+  };
 
   const onClickCreateRoom = () => {
-    axios.post(`/chat/room?name=${roomName}`,{withCredentials: true})
-    .then(res => {
-      console.log(res)
-      setRoomName('')
-    })
-    .catch(res => console.log(res))
-  }
+    axios
+      .post(`/chat/room?name=${roomName}`, { withCredentials: true })
+      .then((res) => {
+        console.log(res);
+        setRoomName("");
+      })
+      .catch((res) => console.log(res));
+  };
 
   const onClickEnterRoom = (roomId: string) => {
     console.log(roomId);
-  }
+  };
 
   return (
     <SCContainer>
@@ -81,7 +85,6 @@ const Rooms = () => {
           <SCInput value={id} onChange={onChangeId} />
         </SCInputContainer>
       </div>
-
       <div>
         Rooms Create
         <SCInputContainer>
@@ -89,14 +92,13 @@ const Rooms = () => {
           <SCButton onClick={onClickCreateRoom}>create</SCButton>
         </SCInputContainer>
       </div>
-
       Rooms
-      {rooms.map(el => {
+      {rooms.map((el) => {
         return (
           <SCRoom key={el.roomId} to={`/chat/${el.roomId}`}>
             {el.name}
           </SCRoom>
-        )
+        );
       })}
     </SCContainer>
   );
