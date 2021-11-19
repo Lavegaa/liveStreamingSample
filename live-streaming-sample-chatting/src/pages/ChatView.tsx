@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
-import styled, { css } from 'styled-components';
+import React, { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router";
+import styled, { css } from "styled-components";
 import * as StompJs from "@stomp/stompjs";
-import SockJS from './socket';
+import SockJS from "./socket";
 
 interface IMessage {
   userId: string;
@@ -52,17 +53,34 @@ const SCButton = styled.button`
   font-size: 20px;
 `;
 
-
 const ChatView = () => {
-  const [message, setMessage] = useState('');
+  const { item } = useParams();
+  const [message, setMessage] = useState("");
+  const [result, setResult] = useState<any>();
   const [messages, setMessages] = useState<IMessage[]>([]);
 
   const client = useRef<any>({});
 
+  const handleMessage = (
+    type: string = "ENTER",
+    sender: string = "",
+    message: string = ""
+  ) => {
+    client.current.publish({
+      destination: "/pub/chat/message",
+      body: JSON.stringify({
+        type: type,
+        roomId: item,
+        sender: sender,
+        message: message,
+      }),
+      headers: { priority: "9" },
+    });
+  };
 
   useEffect((): any => {
     client.current = new StompJs.Client({
-      webSocketFactory: () => new SockJS("/ws"),
+      webSocketFactory: () => new SockJS("/ws-stomp"),
       debug: function (str) {
         console.log(str);
       },
@@ -71,6 +89,23 @@ const ChatView = () => {
       heartbeatOutgoing: 4000,
       onConnect: () => {
         console.log(">>>>>>>> 소켓 연결 <<<<<<<<");
+        client.current.subscribe(`/sub/chat/room/${item}`, function (m: any) {
+          const message = JSON.parse(m.body);
+          setResult(message);
+          console.log("message:  ", message);
+        });
+
+        handleMessage("ENTER", "chanho", "");
+        client.current.publish({
+          destination: "/pub/chat/message",
+          body: JSON.stringify({
+            type: "ENTER",
+            roomId: item,
+            sender: "chanho",
+            message: "hello",
+          }),
+          headers: { priority: "9" },
+        });
       },
       onStompError: (frame) => {
         console.error(frame);
@@ -86,30 +121,28 @@ const ChatView = () => {
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
-  }
+  };
 
-  const onClick = () => {
-  }
+  const onClick = () => {};
 
   return (
     <SCContainer>
-      {
-        messages.map((el, idx) => {
-          return (
-            <SCChatContianer key={idx} position={el.userId === 'qwer' ? 'flex-end' : 'flex-start'} >
-              <SCChat backgroundColor={el.userId === 'qwer' ? 'yellow' : 'white'}>
-                {el.message}
-              </SCChat>
-            </SCChatContianer>
-          )
-        })
-      }
+      {messages.map((el, idx) => {
+        return (
+          <SCChatContianer
+            key={idx}
+            position={el.userId === "qwer" ? "flex-end" : "flex-start"}
+          >
+            <SCChat backgroundColor={el.userId === "qwer" ? "yellow" : "white"}>
+              {el.message}
+            </SCChat>
+          </SCChatContianer>
+        );
+      })}
 
       <SCSubmitContainer>
-        <SCInput value={message} onChange={onChange}/>
-        <SCButton onClick={onClick}>
-          확인
-        </SCButton>
+        <SCInput value={message} onChange={onChange} />
+        <SCButton onClick={onClick}>확인</SCButton>
       </SCSubmitContainer>
     </SCContainer>
   );
