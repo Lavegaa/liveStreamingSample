@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ReactPlayer from 'react-player';
 
 const usePlayer = function () {
-  const [url, setUrl] = useState<string>('');
+  const [url, setUrl] = useState<string>('http://10.20.125.65:8080/hls/test.m3u8');
   const [isPlay, setIsPlay] = useState<boolean>(false);
 
   const handleUrl = (e: React.ChangeEvent<HTMLInputElement>) => {

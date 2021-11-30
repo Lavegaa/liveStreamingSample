@@ -231,6 +231,13 @@ io.on("connection", function (socket) {
     });
   });
 
+  socket.on("finishEncoding", function (m) {
+    if (feedStream) {
+      ffmpeg_process.stdin.end();
+      ffmpeg_process.kill("SIGINT");
+    }
+  });
+
   socket.on("binarystream", function (m) {
     if (!feedStream) {
       socket.emit("fatal", "rtmp not set yet.");
@@ -238,7 +245,6 @@ io.on("connection", function (socket) {
       ffmpeg_process.kill("SIGINT");
       return;
     }
-    console.log(m);
     feedStream(m);
   });
   socket.on("disconnect", function () {

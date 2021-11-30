@@ -31,7 +31,7 @@ interface mobileType {
 }
 
 const useStream = function () {
-  const [url, setUrl] = useState<string>('rtmp://10.100.120.47:1935/stream/two');
+  const [url, setUrl] = useState<string>('rtmp://10.100.120.51:1935/live/test');
   const [localStream, setLocalStream] = useState<MediaStream | undefined>();
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | undefined>();
   const [socket, setSocket] = useState<any>();
@@ -61,6 +61,9 @@ const useStream = function () {
         console.log('message:  ', m);
         setMessage(m);
       });
+      socket.on('ffmpeg_stderr', function (m: any) {
+        console.log('FFMPEG:'.concat(m));
+      });
     }
   }, [socket]);
 
@@ -80,7 +83,6 @@ const useStream = function () {
       // mediaRecorder.onerror = function (event) {};
 
       mediaRecorder.ondataavailable = function (e) {
-        console.log(e.data);
         if (message !== 'onAir') {
           setMessage('onAir');
         }
@@ -110,7 +112,7 @@ const useStream = function () {
       query: { framespersecond: '15', audioBitrate: '22050' },
     };
 
-    setSocket(socketIOClient('http://10.20.125.112:1437', socketOptions));
+    setSocket(socketIOClient('http://10.100.120.43:1437', socketOptions));
   }, []);
 
   const handleCameraReady = useCallback(() => {

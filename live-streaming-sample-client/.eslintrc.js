@@ -21,5 +21,6 @@ module.exports = {
     'react/jsx-filename-extension': [2, { extensions: ['.js', '.jsx', '.ts', '.tsx'] }],
     'jsx-a11y/no-noninteractive-element-interactions': 0,
     'no-restricted-exports': 0,
+    'jsx-a11y/media-has-caption': 0,
   },
 };
